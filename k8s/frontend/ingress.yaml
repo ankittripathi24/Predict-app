@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: your-domain.com  # Replace with your domain
+  - host: atripathi.tech  # Update this domain.
     http:
       paths:
       - path: /
