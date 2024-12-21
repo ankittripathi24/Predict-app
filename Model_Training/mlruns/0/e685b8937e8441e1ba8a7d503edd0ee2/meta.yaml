@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/ankittripathi/Documents/Primitive%20Programmer/Kubernetes/Model_Training/mlruns/0/e685b8937e8441e1ba8a7d503edd0ee2/artifacts
+end_time: 1734328363133
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: e685b8937e8441e1ba8a7d503edd0ee2
+run_name: kindly-quail-505
+run_uuid: e685b8937e8441e1ba8a7d503edd0ee2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1734328359357
+status: 3
+tags: []
+user_id: ankittripathi

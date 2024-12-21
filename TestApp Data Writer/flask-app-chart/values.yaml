@@ -1,0 +1,18 @@
+image:
+  repository: ankittripathi100/my-flask-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 80
+
+ingress:
+  enabled: true # Enable if you want to use Ingress resources.
+
+serviceAccount:
+  create: false
+  name: "flask-serviceaccount"
+
+autoscaling:
+  enabled: false

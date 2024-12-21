@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/ankittripathi/Documents/Primitive%20Programmer/Kubernetes/Model_Training/mlruns/0/a8c3d326d71647c7a7b359c6febb2c0f/artifacts
+end_time: 1734325176021
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a8c3d326d71647c7a7b359c6febb2c0f
+run_name: big-wasp-216
+run_uuid: a8c3d326d71647c7a7b359c6febb2c0f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1734325170856
+status: 3
+tags: []
+user_id: ankittripathi

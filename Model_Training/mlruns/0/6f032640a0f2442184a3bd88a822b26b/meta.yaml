@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/ankittripathi/Documents/Primitive%20Programmer/Kubernetes/Model_Training/mlruns/0/6f032640a0f2442184a3bd88a822b26b/artifacts
+end_time: 1734377483743
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 6f032640a0f2442184a3bd88a822b26b
+run_name: intrigued-hare-268
+run_uuid: 6f032640a0f2442184a3bd88a822b26b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1734377480605
+status: 3
+tags: []
+user_id: ankittripathi

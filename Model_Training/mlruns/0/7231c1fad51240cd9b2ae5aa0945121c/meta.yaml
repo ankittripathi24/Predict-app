@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/ankittripathi/Documents/Primitive%20Programmer/Kubernetes/Model_Training/mlruns/0/7231c1fad51240cd9b2ae5aa0945121c/artifacts
+end_time: 1734377644341
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 7231c1fad51240cd9b2ae5aa0945121c
+run_name: nebulous-rat-775
+run_uuid: 7231c1fad51240cd9b2ae5aa0945121c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1734377641188
+status: 3
+tags: []
+user_id: ankittripathi

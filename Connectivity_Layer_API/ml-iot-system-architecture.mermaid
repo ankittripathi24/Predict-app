@@ -1,0 +1,47 @@
+flowchart TB
+    subgraph "Data Creation Layer"
+        DC[Data Creator\nPython Script]
+        SCHEDULER[Scheduler\nRun Every 1 Min]
+    end
+
+    subgraph "Data Ingestion Layer"
+        FASTAPI[FastAPI Endpoint]
+        MQTT[MQTT Broker]
+        POSTGRES[(PostgreSQL Database)]
+    end
+
+    subgraph "Machine Learning Layer"
+        ML_TRAIN[ML Model Training\nScript]
+        MODEL_STORE[Model Registry]
+    end
+
+    subgraph "Visualization Layer"
+        DASHBOARD[Web Dashboard\nReact/Next.js]
+        CHARTJS[Chart.js Visualization]
+        API_GW[API Gateway]
+    end
+
+    subgraph "Infrastructure"
+        KUBERNETES[Kubernetes Cluster]
+        MONITORING[Prometheus\nGrafana Monitoring]
+    end
+
+    DC -->|Trigger Data Generation| SCHEDULER
+    SCHEDULER -->|Send Data| FASTAPI
+    SCHEDULER -->|Send Data| MQTT
+    
+    FASTAPI -->|Store Data| POSTGRES
+    MQTT -->|Store Data| POSTGRES
+    
+    POSTGRES -->|Fetch Training Data| ML_TRAIN
+    ML_TRAIN -->|Save Trained Model| MODEL_STORE
+    
+    MODEL_STORE -->|Serve Predictions| API_GW
+    
+    API_GW -->|Real-time Data| DASHBOARD
+    DASHBOARD -->|Render Visualizations| CHARTJS
+    
+    POSTGRES <-->|Real-time Updates| DASHBOARD
+    
+    DC & FASTAPI & MQTT & ML_TRAIN & DASHBOARD --> KUBERNETES
+    KUBERNETES --> MONITORING
