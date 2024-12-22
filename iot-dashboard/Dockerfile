@@ -13,8 +13,10 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Set environment variable for legacy OpenSSL provider
+# Set environment variables
 ENV NODE_OPTIONS=""
+ENV CI=false
+ENV REACT_APP_API_URL=http://localhost:8000
 
 # Build the application
 RUN npm run build
