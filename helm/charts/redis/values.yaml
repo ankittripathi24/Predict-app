@@ -1,0 +1,23 @@
+redis:
+  architecture: standalone
+  auth:
+    enabled: true
+    password: "redispassword"
+  
+  master:
+    persistence:
+      enabled: true
+      size: 5Gi
+    
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: 500m
+      requests:
+        memory: 256Mi
+        cpu: 250m
+  
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false  # Set to true if using Prometheus Operator

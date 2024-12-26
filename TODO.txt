@@ -34,21 +34,48 @@ Priority: HIGH - This is the foundation for platform independence
 ## 2. Helm Charts Organization
 /helm
 ├── charts/
-│   ├── frontend/        # React application
-│   ├── backend/         # FastAPI service
-│   ├── database/        # PostgreSQL
+│   ├── frontend/        # React frontend
+│   ├── backend/         # FastAPI backend
+│   ├── database/        # PostgreSQL database
 │   └── redis/          # Redis cache
 └── values/
-    ├── dev/
-    ├── staging/
-    └── prod/
+    ├── dev/           # Development values
+    ├── staging/       # Staging values
+    └── prod/         # Production values
 
-- Create Helm charts for each component
-- Use Helm dependencies for PostgreSQL and Redis
-- Implement value overrides for different environments
-Priority: HIGH - Essential for consistent deployments
+### Helm Installation Commands:
+1. Add Bitnami repository:
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+```
 
-## 3. Database & Redis Setup
+2. Install charts for development:
+```bash
+# Install PostgreSQL
+helm install database ./helm/charts/database -f ./helm/values/dev/database.yaml
+
+# Install Redis
+helm install redis ./helm/charts/redis -f ./helm/values/dev/redis.yaml
+
+# Install Frontend
+helm install frontend ./helm/charts/frontend -f ./helm/values/dev/frontend.yaml
+```
+
+### Next Steps:
+1. Create backend Helm chart
+2. Add monitoring configurations (Prometheus & Grafana)
+3. Create parent Helm chart to manage all components
+4. Add backup and restore configurations
+5. Document deployment process for each environment
+
+## 3. CI/CD Pipeline (Next Phase)
+- Set up GitHub Actions for automated testing and deployment
+- Configure environment-specific workflows
+- Implement automated rollback procedures
+- Add security scanning
+
+## 4. Database & Redis Setup
 - Use bitnami/postgresql Helm chart
   * Configure replication
   * Set up persistent storage
@@ -59,26 +86,12 @@ Priority: HIGH - Essential for consistent deployments
   * Define security settings
 Priority: HIGH - Critical for application functionality
 
-## 4. Secrets Management
+## 5. Secrets Management
 - Implement sealed-secrets or external-secrets operator
 - Set up encryption for sensitive data
 - Configure environment-specific secrets
 - Manage database credentials securely
 Priority: HIGH - Security is critical
-
-## 5. GitHub Actions CI/CD Pipeline
-/.github/workflows/
-├── build.yml
-├── test.yml
-└── deploy.yml
-
-Workflow steps:
-1. Run tests
-2. Build Docker images
-3. Push to registry
-4. Deploy to Kubernetes
-5. Run integration tests
-Priority: HIGH - Automation is key for reliability
 
 ## 6. Application Configuration
 - Create ConfigMaps for environment variables
@@ -112,13 +125,6 @@ Priority: LOW - Can be implemented later
 - Application state backups
 - Disaster recovery plans
 Priority: LOW - Implement after stable deployment
-
-## Next Steps:
-1. Set up Helm charts for existing components
-2. Create GitHub Actions workflow
-3. Implement PostgreSQL and Redis with Helm
-4. Configure secrets management
-5. Document the deployment process
 
 ## Notes:
 - Use Helm charts whenever possible for standardization

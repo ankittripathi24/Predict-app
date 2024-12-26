@@ -1,0 +1,64 @@
+global:
+  environment: production
+  serviceType: ClusterIP
+  defaultPort: 8000
+
+services:
+  data-service:
+    image: 
+      repository: ankittripathi100/iot-data-service
+      tag: latest
+      pullPolicy: IfNotPresent
+    replicaCount: 2
+    port: 8000
+    env:
+      - name: LOG_LEVEL
+        value: INFO
+    nodeSelector:
+      disktype: ssd
+    
+  prediction-service:
+    image: 
+      repository: ankittripathi100/iot-prediction-service
+      tag: latest
+      pullPolicy: IfNotPresent
+    replicaCount: 2
+    port: 8000
+
+  ingestion-service:
+    image: 
+      repository: ankittripathi100/iot-ingestion-service
+      tag: latest
+    replicaCount: 2
+    port: 8000
+
+# Default resources can be overridden per service
+defaultResources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Optional: Add probe configurations
+probes:
+  readiness:
+    path: /health
+    initialDelaySeconds: 30
+    periodSeconds: 10
+
+# Optional: Environment-specific configurations
+environments:
+  development:
+    replicaCount: 1
+    resources:
+      limits:
+        cpu: 250m
+        memory: 256Mi
+  production:
+    replicaCount: 2
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi

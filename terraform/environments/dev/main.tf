@@ -1,22 +1,35 @@
 locals {
   environment = "dev"
-  tags = {
-    Environment = local.environment
-    Project     = "iot-dashboard"
-    ManagedBy   = "terraform"
-  }
+  tags = [
+    "environment:${local.environment}",
+    "project:iot-dashboard",
+    "managed-by:terraform"
+  ]
 }
 
-module "doks" {
-  source = "../../modules/doks"
+module "lke" {
+  source = "../../modules/lke"
   
   cluster_name = "${local.environment}-cluster"
   region       = var.region
   tags         = local.tags
-  
-  # Optional configurations
+
   kubernetes_version = "1.28"
-  node_size         = "s-2vcpu-4gb"
-  min_nodes         = 1
-  max_nodes         = 3
+  high_availability = false  # Set to true for production
+
+  node_pools = [
+    {
+      type      = "g6-standard-2"  # 2 CPU, 4GB RAM
+      count     = 2
+      min_nodes = 1
+      max_nodes = 3
+    }
+  ]
+}
+
+# Save kubeconfig to the k8s/config directory
+resource "local_file" "kubeconfig" {
+  content_base64 = module.lke.kubeconfig
+  filename       = "${path.root}/../../k8s/config/kubeconfig.yaml"
+  file_permission = "0600"  # Read/write for owner only
 }

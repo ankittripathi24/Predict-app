@@ -1,0 +1,18 @@
+redis:
+  auth:
+    password: "redis-dev-pass"
+  
+  master:
+    persistence:
+      size: 2Gi
+    
+    resources:
+      limits:
+        memory: 256Mi
+        cpu: 250m
+      requests:
+        memory: 128Mi
+        cpu: 100m
+  
+  metrics:
+    enabled: false

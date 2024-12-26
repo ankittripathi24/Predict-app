@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-backend-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    - host: api.atripathi.tech
+      http:
+        paths:
+          - path: /api/v1/sensor-data
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-data-service
+                port:
+                  number: 80
+          - path: /api/v1/predictions
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-prediction-service
+                port:
+                  number: 80
+          - path: /api/v1/upload
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-ingestion-service
+                port:
+                  number: 80
