@@ -1,0 +1,11 @@
+apiVersion: v2
+name: iot-dashboard-database
+description: A Helm chart for PostgreSQL Database
+type: application
+version: 0.1.0
+appVersion: "14.0"
+
+dependencies:
+  - name: postgresql
+    version: "12.5.6"
+    repository: https://charts.bitnami.com/bitnami

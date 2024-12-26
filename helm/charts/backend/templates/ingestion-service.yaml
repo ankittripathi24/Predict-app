@@ -1,0 +1,32 @@
+{{- with .Values.services.ingestion-service }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingestion-service
+  labels:
+    app: ingestion-service
+spec:
+  replicas: {{ .replicaCount }}
+  selector:
+    matchLabels:
+      app: ingestion-service
+  template:
+    metadata:
+      labels:
+        app: ingestion-service
+    spec:
+      containers:
+        - name: ingestion-service
+          image: "{{ .image.repository }}:{{ .image.tag }}"
+          imagePullPolicy: {{ .image.pullPolicy | default "IfNotPresent" }}
+          ports:
+            - containerPort: {{ .port | default 8000 }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .port | default 8000 }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            {{- toYaml $.Values.defaultResources | nindent 12 }}
+{{- end }}

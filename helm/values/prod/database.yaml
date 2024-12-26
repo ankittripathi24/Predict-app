@@ -1,0 +1,25 @@
+postgresql:
+  global:
+    postgresql:
+      auth:
+        postgresPassword: "postgres-prod"
+        username: "iotuser"
+        password: "iotpass-prod"
+        database: "iotdb"
+  
+  primary:
+    persistence:
+      size: 20Gi
+    
+    resources:
+      limits:
+        memory: 2Gi
+        cpu: 2000m
+      requests:
+        memory: 1Gi
+        cpu: 1000m
+  
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true

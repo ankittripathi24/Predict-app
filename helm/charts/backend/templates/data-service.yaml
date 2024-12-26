@@ -1,0 +1,70 @@
+{{- range $serviceName, $serviceConfig := .Values.services }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $serviceName }}
+  labels:
+    app: {{ $serviceName }}
+spec:
+  replicas: {{ $serviceConfig.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ $serviceName }}
+  template:
+    metadata:
+      labels:
+        app: {{ $serviceName }}
+    spec:
+      containers:
+        - name: {{ $serviceName }}
+          image: "{{ $serviceConfig.image.repository }}:{{ $serviceConfig.image.tag }}"
+          imagePullPolicy: {{ $serviceConfig.image.pullPolicy | default "IfNotPresent" }}
+          ports:
+            - name: http
+              containerPort: {{ $serviceConfig.port | default 8000 }}
+              protocol: TCP
+          
+          # Health Probe Configuration
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ $serviceConfig.port | default 8000 }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ $serviceConfig.port | default 8000 }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+          resources:
+            {{- toYaml $.Values.defaultResources | nindent 12 }}
+
+          # Environment Variables
+          env:
+            - name: SERVICE_NAME
+              value: {{ $serviceName }}
+            {{- range $serviceConfig.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+
+      # Node Scheduling Options
+      {{- with $serviceConfig.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with $serviceConfig.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with $serviceConfig.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

@@ -1,0 +1,18 @@
+redis:
+  auth:
+    password: "redis-staging-pass"
+  
+  master:
+    persistence:
+      size: 5Gi
+    
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: 500m
+      requests:
+        memory: 256Mi
+        cpu: 250m
+  
+  metrics:
+    enabled: true

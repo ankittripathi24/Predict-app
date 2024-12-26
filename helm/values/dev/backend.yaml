@@ -1,0 +1,49 @@
+dataService:
+  replicas: 1
+  image:
+    repository: ankittripathi100/iot-data-service
+    tag: latest
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+predictionService:
+  replicas: 1
+  image:
+    repository: ankittripathi100/iot-prediction-service
+    tag: latest
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+ingestionService:
+  replicas: 1
+  image:
+    repository: ankittripathi100/iot-ingestion-service
+    tag: latest
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  hosts:
+    - host: api.atripathi.tech
+      paths:
+        - path: /
+          pathType: Prefix
