@@ -1,36 +1,17 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from api.routes import predictions
-import logging
-from shared.config import get_settings
+from config import get_settings
+from shared.server_utils import create_app, start_server, configure_logging
 
+# Get settings and configure logging
 settings = get_settings()
+configure_logging(settings.LOG_LEVEL)
 
-# Configure logging
-logging.basicConfig(
-    level=settings.LOG_LEVEL,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# Create FastAPI application
+app = create_app(
+    title="Prediction Service", 
+    version="1.0.0", 
+    router=predictions.router
 )
-
-app = FastAPI(title="Prediction Service", version="1.0.0")
-
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Health check endpoint
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "service": "prediction-service"}
-
-# Include routers
-app.include_router(predictions.router, prefix="/api/v1", tags=["predictions"])
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    start_server(app, default_port=8001)
