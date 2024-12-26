@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prediction-service
+  labels:
+    app: prediction-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prediction-service
+  template:
+    metadata:
+      labels:
+        app: prediction-service
+    spec:
+      containers:
+      - name: prediction-service
+        image: prediction-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8001
+        env:
+        - name: PORT
+          value: "8001"
+        - name: HOST
+          value: "0.0.0.0"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 15
+          periodSeconds: 30
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prediction-service
+spec:
+  selector:
+    app: prediction-service
+  ports:
+    - protocol: TCP
+      port: 8001
+      targetPort: 8001
+  type: ClusterIP
