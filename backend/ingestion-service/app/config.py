@@ -1,4 +1,5 @@
-from pydantic_settings import BaseSettings
+from functools import lru_cache
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -16,10 +17,16 @@ class Settings(BaseSettings):
     CACHE_TIMEOUT: int = 60
     
     # Service settings
-    SERVICE_NAME: str = "iot-service"
+    SERVICE_NAME: str = "ingestion-service"
     LOG_LEVEL: str = "INFO"
     
-    class Config:
-        env_file = ".env"
+    model_config = SettingsConfigDict(env_file=".env")
+
+    @property
+    def DATABASE_URL(self) -> str:
+        return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
 
+@lru_cache()
+def get_settings() -> Settings:
+    return Settings()

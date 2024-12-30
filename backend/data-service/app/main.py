@@ -10,7 +10,8 @@ configure_logging(settings.LOG_LEVEL)
 app = create_app(
     title="Data Service", 
     version="1.0.0", 
-    router=sensor_data.router
+    router=sensor_data.router,
+    router_prefix=""  # Remove the /api/v1 prefix
 )
 
 if __name__ == "__main__":

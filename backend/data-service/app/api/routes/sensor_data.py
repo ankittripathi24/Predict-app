@@ -9,7 +9,7 @@ from ..schemas.sensor_data import SensorDataResponse
 
 router = APIRouter()
 
-@router.get("/sensor-data", response_model=List[SensorDataResponse])
+@router.get("/get-sensor-data", response_model=List[SensorDataResponse])
 async def get_sensor_data(
     start_time: Optional[datetime] = Query(None),
     end_time: Optional[datetime] = Query(None),

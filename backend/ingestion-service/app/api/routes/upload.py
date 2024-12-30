@@ -1,59 +1,68 @@
-from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 import pandas as pd
-import json
-from app.database import get_db
-from models.sensor_data import SensorData
+from datetime import datetime
 import logging
+
+from app.database import get_db
+from app.schemas.sensor_data import SensorData
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-MAX_FILE_SIZE = 1_000_000  # 1MB
-
 @router.post("/upload")
-async def upload_csv(
+async def upload_data(
     file: UploadFile = File(...),
-    data_type: str = Form(...),
-    metadata: str = Form(...),
     db: Session = Depends(get_db)
 ):
+    if not file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail="Only CSV files are allowed")
+    
     try:
-        # Validate file size
-        content = await file.read()
-        if len(content) > MAX_FILE_SIZE:
-            raise HTTPException(status_code=413, detail="File too large")
-            
-        # Parse CSV
-        df = pd.read_csv(pd.io.common.BytesIO(content))
-        
-        # Parse metadata
-        metadata_dict = json.loads(metadata)
+        # Read the CSV file
+        contents = await file.read()
+        df = pd.read_csv(pd.io.common.BytesIO(contents))
         
         # Validate required columns
         required_columns = ['machine_id', 'timestamp', 'temperature', 'vibration', 'energy_consumption']
-        if not all(col in df.columns for col in required_columns):
-            raise HTTPException(status_code=400, detail="Missing required columns")
-            
-        # Process and save data
-        records = []
-        for _, row in df.iterrows():
-            record = SensorData(
-                machine_id=row['machine_id'],
-                timestamp=pd.to_datetime(row['timestamp']),
-                temperature=row['temperature'],
-                vibration=row['vibration'],
-                energy_consumption=row['energy_consumption'],
-                data_type=data_type,
-                **metadata_dict
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        if missing_columns:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Missing required columns: {', '.join(missing_columns)}"
             )
-            records.append(record)
-            
-        db.bulk_save_objects(records)
+        
+        # Convert timestamp strings to datetime objects
+        df['timestamp'] = pd.to_datetime(df['timestamp'])
+        
+        # Create SensorData objects
+        sensor_data_objects = []
+        for _, row in df.iterrows():
+            try:
+                sensor_data = SensorData(
+                    machine_id=str(row['machine_id']),
+                    timestamp=row['timestamp'],
+                    temperature=float(row['temperature']),
+                    vibration=float(row['vibration']),
+                    energy_consumption=float(row['energy_consumption']),
+                    data_type='sensor_reading'
+                )
+                sensor_data_objects.append(sensor_data)
+            except Exception as e:
+                logger.error(f"Error processing row: {row}, Error: {str(e)}")
+                continue
+        
+        # Add to database
+        for sensor_data in sensor_data_objects:
+            db.add(sensor_data)
         db.commit()
         
-        return {"message": f"Successfully processed {len(records)} records"}
+        return {
+            "message": "Upload successful",
+            "rows_processed": len(sensor_data_objects),
+            "total_rows": len(df)
+        }
         
     except Exception as e:
         logger.error(f"Upload error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))

@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
 class Settings(BaseSettings):
@@ -16,11 +16,10 @@ class Settings(BaseSettings):
     CACHE_TIMEOUT: int = 60
     
     # Service settings
-    SERVICE_NAME: str = "iot-service"
+    SERVICE_NAME: str = "prediction-service"
     LOG_LEVEL: str = "INFO"
     
-    class Config:
-        env_file = ".env"
+    model_config = SettingsConfigDict(env_file=".env")
 
 @lru_cache()
 def get_settings():

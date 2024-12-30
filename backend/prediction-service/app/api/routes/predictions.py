@@ -4,7 +4,7 @@ import joblib
 import numpy as np
 from datetime import datetime, timedelta
 import pandas as pd
-from schemas.prediction import PredictionResponse
+from ...schemas.prediction import PredictionResponse
 import logging
 
 router = APIRouter()

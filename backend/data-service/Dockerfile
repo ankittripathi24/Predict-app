@@ -17,16 +17,24 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
-COPY ../requirements.txt .
+COPY requirements.txt .
+
+# Create shared directory
+RUN mkdir -p /app/shared
+
+# Copy the shared utilities
+COPY ./shared_utils/* /app/shared/
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the shared utilities
-COPY ../shared /app/shared
-
 # Copy the service code
 COPY . .
+
+# Create non-root user
+RUN useradd -m -u 1000 appuser && \
+    chown -R appuser:appuser /app
+USER appuser
 
 # Expose port
 EXPOSE 8000
@@ -36,4 +44,4 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
 # Run the application
-CMD ["python", "-m", "app.main"]
+CMD ["python", "run.py"]

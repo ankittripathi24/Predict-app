@@ -1,5 +1,5 @@
-from app.api.routes import upload
-from config import get_settings
+from .api.routes import upload
+from .config import get_settings
 from shared.server_utils import create_app, start_server, configure_logging
 
 # Get settings and configure logging
