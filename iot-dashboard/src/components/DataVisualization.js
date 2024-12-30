@@ -63,7 +63,8 @@ const DataVisualization = () => {
     
     setLoading(true);
     try {
-      const response = await axios.get('http://0.0.0.0:8000/get-sensor-data', {
+      // Use the nginx ingress endpoint
+      const response = await axios.get('http://localhost:8080/api/data/get-sensor-data', {
         params: {
           limit: ITEMS_PER_PAGE,
           offset: pageNum * ITEMS_PER_PAGE

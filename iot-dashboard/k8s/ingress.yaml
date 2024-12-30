@@ -1,0 +1,50 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: iot-dashboard-ingress
+  namespace: iot-dashboard
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+  - host: atripathi.tech  # Change this to your domain or use localhost
+    http:
+      paths:
+      # Frontend UI
+      - path: /(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-iot-dashboard-backend
+            port:
+              number: 80
+              
+      # Data Service API
+      - path: /api/data(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: data-service
+            port:
+              number: 8000
+              
+      # Prediction Service API
+      - path: /api/predict(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: prediction-service
+            port:
+              number: 8001
+              
+      # Ingestion Service API
+      - path: /api/ingest(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: ingestion-service
+            port:
+              number: 8002
